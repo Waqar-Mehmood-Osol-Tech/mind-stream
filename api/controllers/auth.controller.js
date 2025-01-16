@@ -36,28 +36,28 @@ export const signup = async (req, res, next) => {
     )}/api/auth/verify-email/${verificationToken}`;
 
     // For Real Emails.....
-    // const transporter = nodemailer.createTransport({
-    //   service: "Gmail",
-    //   auth: {
-    //     user: process.env.EMAIL_USERNAME,
-    //     pass: process.env.EMAIL_PASSWORD,
-    //   },
-    // });
-
-    // For dummy Emails
     const transporter = nodemailer.createTransport({
-      host: "sandbox.smtp.mailtrap.io",
-      port: 2525,
+      service: "Gmail",
       auth: {
-        user: "cb3bc6db42ecfe",
-        pass: "80693c921f6dc0",
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
       },
     });
+
+    // For dummy Emails
+    // const transporter = nodemailer.createTransport({
+    //   host: "sandbox.smtp.mailtrap.io",
+    //   port: 2525,
+    //   auth: {
+    //     user: "cb3bc6db42ecfe",
+    //     pass: "80693c921f6dc0",
+    //   },
+    // });
 
     // ${process.env.EMAIL_USERNAME}  place in <> for live emails
 
     await transporter.sendMail({
-      from: `"MindStream" <mindstream@gmail.com>`,
+      from: `"MindStream" <${process.env.EMAIL_USERNAME}>`,
       to: email,
       subject: "Verify Your Email",
       html: `<!DOCTYPE html>
@@ -66,168 +66,66 @@ export const signup = async (req, res, next) => {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Verification - MindStream</title>
-    <style>
-        /* Basic reset for the page */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-
-        /* Container for the email body */
-        .email-container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 30px;
-            background-color: #fff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        /* MindStream branding style */
-        .mindstream-branding {
-            font-size: 36px;
-            font-weight: bold;
-            background: linear-gradient(to right, #6A1B9A, #9C27B0);
-            -webkit-background-clip: text;
-            color: transparent;
-            margin-bottom: 20px;
-        }
-
-        /* Header style */
-        .email-container h1 {
-            color: #fff;
-            font-size: 36px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            background: linear-gradient(to right, #6A1B9A, #9C27B0);
-            -webkit-background-clip: text;
-            color: transparent;
-        }
-
-        /* Paragraph style */
-        .email-container p {
-            font-size: 16px;
-            color: #555;
-            line-height: 1.5;
-            margin-bottom: 20px;
-        }
-
-        /* Styled verification link */
-        .verification-link {
-            display: block;
-            background-color: #6A1B9A; /* Purple theme */
-            color: #fff;
-            padding: 12px 24px;
-            font-size: 16px;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-            margin: 0 auto 20px;
-            max-width: 200px;
-        }
-
-        /* Hover effect for the link */
-        .verification-link:hover {
-            background-color: #8E24AA; /* Slightly lighter purple for hover effect */
-        }
-
-        /* Mindstream effect - subtle animation to focus attention */
-        .verification-link::before {
-            content: '';
-            display: block;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
-            transform: scale(0);
-            animation: mindstream 1.5s ease-out infinite;
-            animation-delay: 0.3s;
-        }
-
-        @keyframes mindstream {
-            0% {
-                transform: scale(0);
-                opacity: 0.5;
-            }
-            100% {
-                transform: scale(3);
-                opacity: 0;
-            }
-        }
-
-        /* Additional section for further instructions or information */
-        .additional-info {
-            font-size: 14px;
-            color: #777;
-            margin-top: 30px;
-            text-align: left;
-            padding: 0 20px;
-        }
-
-        .additional-info p {
-            margin-bottom: 10px;
-        }
-
-        /* Responsive design for smaller screens */
-        @media (max-width: 600px) {
-            .email-container {
-                padding: 20px;
-            }
-
-            .email-container h1 {
-                font-size: 28px;
-            }
-
-            .email-container p {
-                font-size: 14px;
-            }
-
-            .verification-link {
-                padding: 10px 20px;
-            }
-        }
-
-        /* Full-page background gradient */
-        .bg-gradient {
-            background: linear-gradient(to right, #6A1B9A, #9C27B0);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-    </style>
 </head>
-<body>
-    <div class="bg-gradient">
-        <div class="email-container">
-            <!-- MindStream Branding -->
-            <div class="mindstream-branding">MindStream</div>
-
-            <h1>Email Verification</h1>
-            
-            <!-- Email Content -->
-            <p>Hi there!</p>
-            <p>Thank you for registering with MindStream. To complete your account setup, please verify your email address by clicking the link below:</p>
-
-            <!-- Centered Verification Link -->
-            <a href="${verificationURL}" class="verification-link">Verify Email</a>
-
-            <p>If you did not request this verification, you can ignore this message. The link will expire in 24 hours, so make sure to verify your email soon!</p>
-
-            <!-- Additional Info Section -->
-            <div class="additional-info">
-                <p>If you encounter any issues, feel free to contact our support team at <strong>support@mindstream.com</strong>.</p>
-                <p>Best regards,</p>
-                <p><strong>The MindStream Team</strong></p>
-            </div>
-        </div>
-    </div>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #6A1B9A;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #6A1B9A;">
+        <tr>
+            <td align="center" style="padding: 40px 0;">
+                <!-- Main Content Table -->
+                <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+                    <tr>
+                        <td style="padding: 40px 30px; text-align: center;">
+                            <!-- Logo/Brand -->
+                            <h1 style="font-size: 36px; margin: 0 0 20px 0; color: #6A1B9A;">MindStream</h1>
+                            
+                            <!-- Title -->
+                            <h2 style="font-size: 28px; margin: 0 0 30px 0; color: #6A1B9A;">Email Verification</h2>
+                            
+                            <!-- Content -->
+                            <p style="font-size: 16px; line-height: 1.5; color: #555; margin: 0 0 20px 0;">Hi there!</p>
+                            
+                            <p style="font-size: 16px; line-height: 1.5; color: #555; margin: 0 0 30px 0;">
+                                Thank you for registering with MindStream. To complete your account setup, please verify your email address by clicking the button below:
+                            </p>
+                            
+                            <!-- Button -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center" style="padding: 20px 0;">
+                                        <table cellpadding="0" cellspacing="0" border="0">
+                                            <tr>
+                                                <td align="center" style="background-color: #6A1B9A; border-radius: 4px;">
+                                                    <a href="${verificationURL}" style="display: inline-block; padding: 12px 24px; font-size: 16px; color: #ffffff; text-decoration: none;">Verify Email</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <p style="font-size: 16px; line-height: 1.5; color: #555; margin: 0 0 30px 0;">
+                                If you did not request this verification, you can ignore this message. The link will expire in 24 hours, so make sure to verify your email soon!
+                            </p>
+                            
+                            <!-- Additional Info -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top: 1px solid #eee;">
+                                <tr>
+                                    <td style="padding: 20px 0 0 0;">
+                                        <p style="font-size: 14px; line-height: 1.5; color: #777; margin: 0 0 10px 0;">
+                                            If you encounter any issues, feel free to contact our support team at
+                                            <a href="mailto:support@mindstream.com" style="color: #6A1B9A; text-decoration: none;">support@mindstream.com</a>
+                                        </p>
+                                        <p style="font-size: 14px; line-height: 1.5; color: #777; margin: 0 0 5px 0;">Best regards,</p>
+                                        <p style="font-size: 14px; line-height: 1.5; color: #777; margin: 0; font-weight: bold;">The MindStream Team</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
 `,
@@ -365,28 +263,28 @@ export const forgotPassword = async (req, res, next) => {
       "host"
     )}/reset-password/${encodeURIComponent(resetToken)}`;
 
-    // const transporter = nodemailer.createTransport({
-    //   service: "Gmail",
-    //   auth: {
-    //     user: process.env.EMAIL_USERNAME,
-    //     pass: process.env.EMAIL_PASSWORD,
-    //   },
-    // });
-
-    // For dummy Emails
     const transporter = nodemailer.createTransport({
-      host: "sandbox.smtp.mailtrap.io",
-      port: 2525,
+      service: "Gmail",
       auth: {
-        user: "cb3bc6db42ecfe",
-        pass: "80693c921f6dc0",
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
       },
     });
+
+    // For dummy Emails
+    // const transporter = nodemailer.createTransport({
+    //   host: "sandbox.smtp.mailtrap.io",
+    //   port: 2525,
+    //   auth: {
+    //     user: "cb3bc6db42ecfe",
+    //     pass: "80693c921f6dc0",
+    //   },
+    // });
 
     // ${process.env.EMAIL_USERNAME}  place in <> for live emails
 
     await transporter.sendMail({
-      from: `"MindStream" <mindstream@gmail.com>`,
+      from: `"MindStream" <${process.env.EMAIL_USERNAME}>`,
       to: user.email,
       subject: "Password Reset Request",
       html: `<!DOCTYPE html>
@@ -395,145 +293,61 @@ export const forgotPassword = async (req, res, next) => {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Password Reset - MindStream</title>
-    <style>
-        /* Basic reset for the page */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-
-        /* Container for the email body */
-        .email-container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 30px;
-            background-color: #fff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        /* MindStream branding style */
-        .mindstream-branding {
-            font-size: 36px;
-            font-weight: bold;
-            background: linear-gradient(to right, #6A1B9A, #9C27B0);
-            -webkit-background-clip: text;
-            color: transparent;
-            margin-bottom: 20px;
-        }
-
-        /* Header style */
-        .email-container h1 {
-            color: #fff;
-            font-size: 36px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            background: linear-gradient(to right, #6A1B9A, #9C27B0);
-            -webkit-background-clip: text;
-            color: transparent;
-        }
-
-        /* Paragraph style */
-        .email-container p {
-            font-size: 16px;
-            color: #555;
-            line-height: 1.5;
-            margin-bottom: 20px;
-        }
-
-        /* Styled reset link */
-        .reset-link {
-            display: block;
-            background-color: #6A1B9A; /* Purple theme */
-            color: #fff;
-            padding: 12px 24px;
-            font-size: 16px;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-            margin: 0 auto 20px;
-            max-width: 200px;
-        }
-
-        /* Hover effect for the link */
-        .reset-link:hover {
-            background-color: #8E24AA; /* Slightly lighter purple for hover effect */
-        }
-
-        /* Mindstream effect - subtle animation to focus attention */
-        .reset-link::before {
-            content: '';
-            display: block;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
-            transform: scale(0);
-            animation: mindstream 1.5s ease-out infinite;
-            animation-delay: 0.3s;
-        }
-
-        @keyframes mindstream {
-            0% {
-                transform: scale(0);
-                opacity: 0.5;
-            }
-            100% {
-                transform: scale(3);
-                opacity: 0;
-            }
-        }
-
-        /* Responsive design for smaller screens */
-        @media (max-width: 600px) {
-            .email-container {
-                padding: 20px;
-            }
-
-            .email-container h1 {
-                font-size: 28px;
-            }
-
-            .email-container p {
-                font-size: 14px;
-            }
-
-            .reset-link {
-                padding: 10px 20px;
-            }
-        }
-
-        /* Full-page background gradient */
-        .bg-gradient {
-            background: linear-gradient(to right, #6A1B9A, #9C27B0);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-    </style>
 </head>
-<body>
-    <div class="bg-gradient">
-        <div class="email-container">
-            <!-- MindStream Branding -->
-            <div class="mindstream-branding">MindStream</div>
-
-            <h1>Password Reset Request</h1>
-            <p>You requested a password reset for your MindStream account. Click the link below to reset your password:</p>
-
-            <!-- Reset Link -->
-            <a href="${resetURL}" class="reset-link">Reset Password</a>
-
-            <p>If you did not request this, please ignore this email. Your password will remain unchanged.</p>
-        </div>
-    </div>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #6A1B9A;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #6A1B9A;">
+        <tr>
+            <td align="center" style="padding: 40px 0;">
+                <!-- Main Content Table -->
+                <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+                    <tr>
+                        <td style="padding: 40px 30px; text-align: center;">
+                            <!-- Logo/Brand -->
+                            <h1 style="font-size: 36px; margin: 0 0 20px 0; color: #6A1B9A;">MindStream</h1>
+                            
+                            <!-- Title -->
+                            <h2 style="font-size: 28px; margin: 0 0 30px 0; color: #6A1B9A;">Password Reset Request</h2>
+                            
+                            <!-- Content -->
+                            <p style="font-size: 16px; line-height: 1.5; color: #555; margin: 0 0 30px 0;">
+                                You requested a password reset for your MindStream account. Click the button below to reset your password:
+                            </p>
+                            
+                            <!-- Button -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center" style="padding: 20px 0;">
+                                        <table cellpadding="0" cellspacing="0" border="0">
+                                            <tr>
+                                                <td align="center" style="background-color: #6A1B9A; border-radius: 4px;">
+                                                    <a href="${resetURL}" style="display: inline-block; padding: 12px 24px; font-size: 16px; color: #ffffff; text-decoration: none;">Reset Password</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <p style="font-size: 16px; line-height: 1.5; color: #555; margin: 0 0 20px 0;">
+                                If you did not request this, please ignore this email. Your password will remain unchanged.
+                            </p>
+                            
+                            <!-- Footer -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top: 1px solid #eee;">
+                                <tr>
+                                    <td style="padding: 20px 0 0 0;">
+                                        <p style="font-size: 14px; line-height: 1.5; color: #777; margin: 0;">
+                                            For security reasons, this password reset link will expire in 24 hours.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html> `,
     });
