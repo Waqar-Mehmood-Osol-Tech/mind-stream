@@ -7,6 +7,9 @@ import VerifyEmail from "../pages/auth/VerifyEmail.jsx";
 import AuthorProfilePage from "../pages/AuthorProfilePage.jsx";
 import UnderDevelopment from "../pages/UnderDevelopment.jsx";
 import OurStory from "../pages/About.jsx";
+import PrivacyPolicy from "../pages/PrivacyPolicy.jsx";
+import TermsOfService from "../pages/TermsOfServices.jsx";
+import ContentPolicy from "../pages/ContentPolicy.jsx";
 
 const Home = React.lazy(() => import("../pages/Home.jsx"));
 const SignIn = React.lazy(() => import("../pages/auth/SignIn.jsx"));
@@ -55,6 +58,18 @@ export const RoutesName = {
       path: "/our-story",
       element: <OurStory />,
     },
+    {
+      path: "/privacy-policy",
+      element: <PrivacyPolicy />,
+    },
+    {
+      path: "/terms-of-services",
+      element: <TermsOfService />,
+    },
+    {
+      path: "/content-policy",
+      element: <ContentPolicy />,
+    },
   ],
 
   publicRoutes: [
@@ -86,6 +101,18 @@ export const RoutesName = {
     {
       path: "/our-story",
       element: <OurStory />,
+    },
+    {
+      path: "/privacy-policy",
+      element: <PrivacyPolicy />,
+    },
+    {
+      path: "/terms-of-services",
+      element: <TermsOfService />,
+    },
+    {
+      path: "/content-policy",
+      element: <ContentPolicy />,
     },
   ],
 

@@ -1,5 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
+
+// /* eslint-disable react/prop-types */
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -93,13 +93,13 @@ const BlogDetail = () => {
   }
 
   return (
-    // Blog Detail with Ad Space:
+    // With Ad Space:
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
       {/* Hero Section */}
-      <section className="relative h-[80vh] flex items-center justify-center">
+      <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
-            src={post?.image}
+            src={post?.image || "/placeholder.svg"}
             alt={post?.title}
             className="w-full h-full object-cover"
           />
@@ -166,15 +166,13 @@ const BlogDetail = () => {
       </section>
 
       {/* Content Section with Sticky Ads */}
-      <section className="flex mx-auto px-4 py-16 justify-between relative">
-        {/* Left Sticky Ad large screen */}
-        <div className="hidden lg:flex">
+      <section className="container mx-auto px-4 py-16 flex justify-between relative">
+        {/* Left Sticky Ad */}
+        <div className="">
           <AdComponent
             position="left"
             imageUrl="https://sisteradamson417864484.wordpress.com/wp-content/uploads/2022/11/httpswww.minimeinsights.com20200912cadbury-dairy-milk-celebrates-the-goodness-of-everyone.png"
-            isVisible={showLeftAd}
-            onClose={() => setShowLeftAd(false)}
-            onShow={() => setShowLeftAd(true)}
+            onClose={closeAd}
           />
         </div>
 
@@ -210,7 +208,7 @@ const BlogDetail = () => {
               <Link to={`/author/${author?._id}`}>
                 <div className="rounded-full w-12 h-12 border border-purple-900">
                   <img
-                    src={author?.profilePicture}
+                    src={author?.profilePicture || "/placeholder.svg"}
                     alt="Author"
                     className="w-full h-full rounded-full"
                   />
@@ -253,45 +251,18 @@ const BlogDetail = () => {
           </div>
         </div>
 
-        {/* Right Sticky Ad large Screen */}
-        <div className="hidden lg:flex">
+        {/* Right Sticky Ad */}
+        <div className="">
           <AdComponent
             position="right"
             imageUrl="https://media.licdn.com/dms/image/v2/D5622AQEUleLIRfIV7Q/feedshare-shrink_2048_1536/B56ZPVNaRNGQAo-/0/1734448883935?e=2147483647&v=beta&t=meKpnptoF-rKAffP7qKX_PcAMB9cQFqXFFzqzJ-cfwM"
-            isVisible={showRightAd}
-            onClose={() => setShowRightAd(false)}
-            onShow={() => setShowRightAd(true)}
+            onClose={closeAd}
           />
         </div>
       </section>
 
       <section className="container mx-auto px-4 py-16">
         <CommentSection postId={postId} />
-      </section>
-
-      {/* Mobile Sponsored Ad section */}
-      <section className="flex flex-col mx-auto px-4 pb-36 lg:hidden">
-        <h2 className="text-xl font-semibold mb-4">Sponsored Ads</h2>
-        <div className="grid grid-cols-1 mx-auto sm:grid-cols-2 gap-24">
-          <div className="mt-10">
-            <AdComponent
-              position="left"
-              imageUrl="https://sisteradamson417864484.wordpress.com/wp-content/uploads/2022/11/httpswww.minimeinsights.com20200912cadbury-dairy-milk-celebrates-the-goodness-of-everyone.png"
-              isVisible={showLeftAd}
-              onClose={() => setShowLeftAd(false)}
-              onShow={() => setShowLeftAd(true)}
-            />
-          </div>
-          <div className="mt-10">
-            <AdComponent
-              position="right"
-              imageUrl="https://media.licdn.com/dms/image/v2/D5622AQEUleLIRfIV7Q/feedshare-shrink_2048_1536/B56ZPVNaRNGQAo-/0/1734448883935?e=2147483647&v=beta&t=meKpnptoF-rKAffP7qKX_PcAMB9cQFqXFFzqzJ-cfwM"
-              isVisible={showRightAd}
-              onClose={() => setShowRightAd(false)}
-              onShow={() => setShowRightAd(true)}
-            />
-          </div>
-        </div>
       </section>
 
       {/* Related Posts Section */}
@@ -317,6 +288,7 @@ const BlogDetail = () => {
         </div>
       </section>
     </div>
+    
   );
 };
 

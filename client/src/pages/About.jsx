@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const OurStory = () => {
   const { currentUser } = useSelector((state) => state.user);
   return (
-    <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 min-h-screen mt-16 flex items-center justify-center px-6">
+    <div className="bg-purple-100 min-h-screen mt-16 flex items-center justify-center px-6">
       <div className="max-w-4xl bg-white rounded-lg shadow-lg p-8">
         <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-6">
           Our Story

@@ -15,7 +15,7 @@ export default function Footer() {
             <p className="mt-2 text-sm text-white">Unleash Your Thoughts</p>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-white">Explore</h3>
+            <h3 className="text-md font-semibold mb-4 text-white">Explore</h3>
             <ul className="space-y-2 text-sm text-white">
               <li>
                 <Link
@@ -44,36 +44,36 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-white">Services</h3>
+            <h3 className="text-md font-semibold mb-4 text-white">Terms & Conditions</h3>
             <ul className="space-y-2 text-sm text-white">
               <li>
                 <Link
-                  to="/under-development"
+                  to="/privacy-policy"
                   className="hover:text-purple-400 transition-colors"
                 >
-                  Writing Tools
+                  Privacy Policy
                 </Link>
               </li>
               <li>
                 <Link
-                  to="/under-development"
+                  to="/terms-of-services"
                   className="hover:text-purple-400 transition-colors"
                 >
-                  Analytics
+                  Terms of Services
                 </Link>
               </li>
               <li>
                 <Link
-                  to="/under-development"
+                  to="/content-policy"
                   className="hover:text-purple-400 transition-colors"
                 >
-                  SEO Optimization
+                  Content Policy
                 </Link>
               </li>
             </ul>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-white">Support</h3>
+            <h3 className="text-md font-semibold mb-4 text-white">Support</h3>
             <ul className="space-y-2 text-sm text-white ">
               <li>
                 <Link
@@ -102,7 +102,7 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-white">About Us</h3>
+            <h3 className="text-md font-semibold mb-4 text-white">About Us</h3>
             <ul className="space-y-2 text-sm text-white">
               <li>
                 <Link

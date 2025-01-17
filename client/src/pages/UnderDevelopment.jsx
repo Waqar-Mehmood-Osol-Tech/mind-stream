@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const UnderDevelopment = () => {
   return (
-    <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 min-h-screen flex items-center justify-center">
+    <div className="bg-purple-100 min-h-screen flex items-center justify-center">
       <div className="text-center px-6 py-10 bg-white bg-opacity-90 rounded-lg shadow-lg max-w-md">
         <h1 className="text-4xl font-bold text-gray-800 mb-4">
           Coming Soon! 🚀
