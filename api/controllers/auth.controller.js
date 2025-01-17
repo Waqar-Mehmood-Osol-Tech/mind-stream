@@ -183,11 +183,61 @@ export const signin = async (req, res, next) => {
 };
 
 // google auth controller
+// export const google = async (req, res, next) => {
+//   const { email, name, googlePhotoUrl } = req.body;
+//   try {
+//     const user = await User.findOne({ email });
+//     if (user) {
+//       const token = jwt.sign(
+//         { id: user._id, isAdmin: user.isAdmin },
+//         process.env.JWT_SECRET
+//       );
+//       const { password, ...rest } = user._doc;
+//       res
+//         .status(200)
+//         .cookie("access_token", token, {
+//           httpOnly: true,
+//         })
+//         .json(rest);
+//     } else {
+//       const generatedPassword =
+//         Math.random().toString(36).slice(-8) +
+//         Math.random().toString(36).slice(-8);
+//       const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+//       const newUser = new User({
+//         username:
+//           name.toLowerCase().split(" ").join("") +
+//           Math.random().toString(9).slice(-4),
+//         email,
+//         password: hashedPassword,
+//         profilePicture: googlePhotoUrl,
+//       });
+//       await newUser.save();
+//       const token = jwt.sign(
+//         { id: newUser._id, isAdmin: newUser.isAdmin },
+//         process.env.JWT_SECRET
+//       );
+//       const { password, ...rest } = newUser._doc;
+//       res
+//         .status(200)
+//         .cookie("access_token", token, {
+//           httpOnly: true,
+//         })
+//         .json(rest);
+//     }
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 export const google = async (req, res, next) => {
   const { email, name, googlePhotoUrl } = req.body;
   try {
     const user = await User.findOne({ email });
     if (user) {
+      if (!user.isVerified) {
+        return next(errorHandler(403, "Please verify your email to continue."));
+      }
       const token = jwt.sign(
         { id: user._id, isAdmin: user.isAdmin },
         process.env.JWT_SECRET
@@ -204,6 +254,12 @@ export const google = async (req, res, next) => {
         Math.random().toString(36).slice(-8) +
         Math.random().toString(36).slice(-8);
       const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+      const verificationToken = crypto.randomBytes(32).toString("hex");
+      const hashedToken = crypto
+        .createHash("sha256")
+        .update(verificationToken)
+        .digest("hex");
+
       const newUser = new User({
         username:
           name.toLowerCase().split(" ").join("") +
@@ -211,19 +267,37 @@ export const google = async (req, res, next) => {
         email,
         password: hashedPassword,
         profilePicture: googlePhotoUrl,
+        emailVerificationToken: hashedToken,
+        emailVerificationExpires: Date.now() + 30 * 60 * 1000, // 30 minutes
       });
       await newUser.save();
-      const token = jwt.sign(
-        { id: newUser._id, isAdmin: newUser.isAdmin },
-        process.env.JWT_SECRET
-      );
-      const { password, ...rest } = newUser._doc;
-      res
-        .status(200)
-        .cookie("access_token", token, {
-          httpOnly: true,
-        })
-        .json(rest);
+
+      const verificationURL = `${req.protocol}://${req.get(
+        "host"
+      )}/api/auth/verify-email/${verificationToken}`;
+
+      const transporter = nodemailer.createTransport({
+        service: "Gmail",
+        auth: {
+          user: process.env.EMAIL_USERNAME,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      });
+
+      await transporter.sendMail({
+        from: `"MindStream" <${process.env.EMAIL_USERNAME}>`,
+        to: email,
+        subject: "Verify Your Email",
+        html: `<p>Hi ${name},</p>
+              <p>Thanks for signing up using Google! Please verify your email by clicking the link below:</p>
+              <a href="${verificationURL}">Verify Email</a>
+              <p>This link will expire in 30 minutes.</p>`,
+      });
+
+      res.status(200).json({
+        message:
+          "Account created successfully! Please verify your email to continue.",
+      });
     }
   } catch (error) {
     next(error);
