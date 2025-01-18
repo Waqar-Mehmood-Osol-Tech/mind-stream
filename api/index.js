@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
 import postRoutes from "./routes/post.route.js";
-import commentRoutes from './routes/comment.route.js';
+import commentRoutes from "./routes/comment.route.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
@@ -20,17 +20,19 @@ mongoose
   });
 
 const app = express();
-
-// CORS configuration
 const corsOptions = {
-  origin: process.env.FRONT_END_URL, 
+  origin: process.env.FRONT_END_URL || "*", 
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+  allowedHeaders: ["Content-Type", "Authorization"], 
   credentials: true, 
 };
+app.use(cors(corsOptions));
+
+app.options("*", cors(corsOptions)); 
 
 // Middleware
-app.use(cors(corsOptions));
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
 
 app.listen(3001, () => {
   console.log("Server is running on port 3001");
@@ -39,7 +41,7 @@ app.listen(3001, () => {
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/post", postRoutes);
-app.use('/api/comment', commentRoutes);
+app.use("/api/comment", commentRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
@@ -47,7 +49,6 @@ app.use((err, req, res, next) => {
   res.status(statusCode).json({
     success: false,
     statusCode,
-    message
+    message,
   });
-  
 });
