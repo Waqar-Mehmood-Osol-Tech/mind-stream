@@ -559,7 +559,7 @@ export default function CreatePost() {
       setLoading(true);
 
       const res = await axios.post(
-        "/api/post/create",
+        `${import.meta.env.VITE_BACK_END_URL}/api/post/create`,
         { ...data, image: thumbnail },
         {
           headers: {

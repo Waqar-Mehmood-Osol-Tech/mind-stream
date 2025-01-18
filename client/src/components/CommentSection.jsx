@@ -461,7 +461,7 @@ export default function CommentSection({ postId }) {
       return;
     }
     try {
-      const res = await axios.post("/api/comment/create", {
+      const res = await axios.post(`${import.meta.env.VITE_BACK_END_URL}/api/comment/create`, {
         content: comment,
         postId,
         userId: currentUser._id,
@@ -477,7 +477,7 @@ export default function CommentSection({ postId }) {
   useEffect(() => {
     const getComments = async () => {
       try {
-        const res = await axios.get(`/api/comment/getPostComments/${postId}`);
+        const res = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/comment/getPostComments/${postId}`);
         setComments(res.data);
       } catch (error) {
         console.error(error.response?.data?.message || error.message);
@@ -492,7 +492,7 @@ export default function CommentSection({ postId }) {
         navigate("/sign-in");
         return;
       }
-      const res = await axios.put(`/api/comment/likeComment/${commentId}`);
+      const res = await axios.put(`${import.meta.env.VITE_BACK_END_URL}/api/comment/likeComment/${commentId}`);
       setComments(
         comments.map((comment) =>
           comment._id === commentId
@@ -524,7 +524,7 @@ export default function CommentSection({ postId }) {
         navigate("/sign-in");
         return;
       }
-      await axios.delete(`/api/comment/deleteComment/${commentId}`);
+      await axios.delete(`${import.meta.env.VITE_BACK_END_URL}/api/comment/deleteComment/${commentId}`);
       setComments(comments.filter((comment) => comment._id !== commentId));
     } catch (error) {
       console.error(error.response?.data?.message || error.message);

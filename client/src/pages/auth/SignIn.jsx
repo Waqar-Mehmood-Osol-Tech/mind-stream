@@ -40,7 +40,7 @@ const SignIn = () => {
     try {
       dispatch(signInStart());
 
-      const res = await axios.post("/api/auth/signin", data, {
+      const res = await axios.post(`${import.meta.env.VITE_BACK_END_URL}/api/auth/signin`, data, {
         headers: { "Content-Type": "application/json" },
       });
 

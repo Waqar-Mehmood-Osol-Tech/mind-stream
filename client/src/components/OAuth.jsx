@@ -15,7 +15,7 @@ function OAuth() {
     provider.setCustomParameters({ prompt: "select_account" });
     try {
       const resultsFromGoogle = await signInWithPopup(auth, provider);
-      const res = await axios.post("/api/auth/google", {
+      const res = await axios.post(`${import.meta.env.VITE_BACK_END_URL}/api/auth/google`, {
         name: resultsFromGoogle.user.displayName,
         email: resultsFromGoogle.user.email,
         googlePhotoUrl: resultsFromGoogle.user.photoURL,

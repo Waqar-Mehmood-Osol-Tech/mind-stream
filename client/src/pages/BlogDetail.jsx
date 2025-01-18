@@ -26,7 +26,7 @@ const BlogDetail = () => {
 
   const fetchPost = async () => {
     try {
-      const res = await axios.get(`/api/post/getposts?postId=${postId}`);
+      const res = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/post/getposts?postId=${postId}`);
       if (res.data.posts.length > 0) {
         const fetchedPost = res.data.posts[0];
         setPost(fetchedPost);
@@ -40,7 +40,7 @@ const BlogDetail = () => {
 
   const fetchAuthor = async (userId) => {
     try {
-      const res = await axios.get(`/api/user/${userId}`);
+      const res = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/user/${userId}`);
       setAuthor(res.data);
     } catch (error) {
       console.error("Error fetching author:", error.message);
@@ -49,7 +49,7 @@ const BlogDetail = () => {
 
   const fetchRelatedPosts = async (category) => {
     try {
-      const res = await axios.get(`/api/post/getPosts`, {
+      const res = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/post/getPosts`, {
         params: {
           category,
           limit: 3, // Fetch 3 related posts

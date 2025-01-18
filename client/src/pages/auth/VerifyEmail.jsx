@@ -12,7 +12,7 @@ const VerifyEmail = () => {
   useEffect(() => {
     const verifyEmail = async () => {
       try {
-        const res = await axios.get(`/api/auth/verify-email/${token}`);
+        const res = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/auth/verify-email/${token}`);
         if (res.status === 200) {
           setMessage("Email verified successfully! Redirecting to sign-in...");
           setStatus("success");

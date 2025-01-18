@@ -67,7 +67,7 @@ const ProfilePage = () => {
     try {
       dispatch(deleteUserStart());
       setLoading(true);
-      const res = await axios.delete(`/api/user/delete/${currentUser._id}`);
+      const res = await axios.delete(`${import.meta.env.VITE_BACK_END_URL}/api/user/delete/${currentUser._id}`);
       dispatch(deleteUserSuccess(res.data));
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
@@ -146,7 +146,7 @@ const ProfilePage = () => {
       dispatch(updateStart());
       setLoading(true);
       const response = await axios.put(
-        `/api/user/update/${currentUser._id}`,
+        `${import.meta.env.VITE_BACK_END_URL}/api/user/update/${currentUser._id}`,
         formData,
         {
           headers: {
@@ -171,7 +171,7 @@ const ProfilePage = () => {
     try {
       setPostLoading(true);
       const res = await axios.get(
-        `/api/post/getposts?userId=${currentUser._id}`
+        `${import.meta.env.VITE_BACK_END_URL}/api/post/getposts?userId=${currentUser._id}`
       );
       if (res && Array.isArray(res.data.posts)) {
         setUserPosts(res.data.posts);

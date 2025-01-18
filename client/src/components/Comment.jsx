@@ -424,7 +424,7 @@ const Reply = ({ reply, onLike, onEdit, onDelete, commentId }) => {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const { data } = await axios.get(`/api/user/${reply.userId}`);
+        const { data } = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/user/${reply.userId}`);
         setUser(data);
       } catch (error) {
         console.error(error.message);
@@ -440,7 +440,7 @@ const Reply = ({ reply, onLike, onEdit, onDelete, commentId }) => {
 
   const handleSave = async () => {
     try {
-      await axios.put(`/api/comment/editReply/${commentId}/${reply._id}`, {
+      await axios.put(`${import.meta.env.VITE_BACK_END_URL}/api/comment/editReply/${commentId}/${reply._id}`, {
         content: editedContent,
       });
       setIsEditing(false);
@@ -603,7 +603,7 @@ export default function Comment({
   useEffect(() => {
     const getUser = async () => {
       try {
-        const { data } = await axios.get(`/api/user/${comment.userId}`);
+        const { data } = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/user/${comment.userId}`);
         setUser(data);
       } catch (error) {
         console.error(error.message);
@@ -623,7 +623,7 @@ export default function Comment({
 
   const handleSave = async () => {
     try {
-      await axios.put(`/api/comment/editComment/${comment._id}`, {
+      await axios.put(`${import.meta.env.VITE_BACK_END_URL}/api/comment/editComment/${comment._id}`, {
         content: editedContent,
       });
       setIsEditing(false);
@@ -641,7 +641,7 @@ export default function Comment({
   const handleReply = async () => {
     try {
       const { data: updatedComment } = await axios.post(
-        "/api/comment/createReply",
+        `${import.meta.env.VITE_BACK_END_URL}/api/comment/createReply`,
         {
           content: replyContent,
           commentId: comment._id,
@@ -659,7 +659,7 @@ export default function Comment({
 
   const handleDeleteReply = async (commentId, replyId) => {
     try {
-      await axios.delete(`/api/comment/deleteReply/${commentId}/${replyId}`);
+      await axios.delete(`${import.meta.env.VITE_BACK_END_URL}/api/comment/deleteReply/${commentId}/${replyId}`);
       setReplies(replies.filter((reply) => reply._id !== replyId));
       onDeleteReply(commentId, replyId);
     } catch (error) {
@@ -679,7 +679,7 @@ export default function Comment({
   const handleLikeReply = async (commentId, replyId) => {
     try {
       const { data: updatedComment } = await axios.put(
-        `/api/comment/likeReply/${commentId}/${replyId}`
+        `${import.meta.env.VITE_BACK_END_URL}/api/comment/likeReply/${commentId}/${replyId}`
       );
       setReplies(updatedComment.replies);
       onLikeReply(commentId, replyId);

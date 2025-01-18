@@ -26,13 +26,13 @@ export default function Home() {
 
   useEffect(() => {
     fetchLatestBlogs();
-    fetchPopularBlogs();
+    fetchPopularBlogs();    
   }, []);
 
   const fetchLatestBlogs = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`/api/post/getPosts`, {
+      const res = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/post/getPosts`, {
         params: {
           limit: 3,
           order: "desc",
@@ -58,7 +58,7 @@ export default function Home() {
   const fetchPopularBlogs = async () => {
     try {
       setPBlogsLoading(true);
-      const res = await axios.get(`/api/post/getPosts`);
+      const res = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/post/getPosts`);
 
       if (res && Array.isArray(res.data.posts)) {
         const blogsWithComments = await Promise.all(
@@ -86,7 +86,7 @@ export default function Home() {
 
   const getCommentCount = async (postId) => {
     try {
-      const res = await axios.get(`/api/comment/getPostComments/${postId}`);
+      const res = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/comment/getPostComments/${postId}`);
       if (res && Array.isArray(res.data)) {
         return res.data.length;
       }

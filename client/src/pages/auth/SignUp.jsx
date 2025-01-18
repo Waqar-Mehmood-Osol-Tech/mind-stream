@@ -60,7 +60,7 @@ const SignUp = () => {
       setLoading(true);
       setErrorMessage(null);
 
-      const res = await axios.post("/api/auth/signup", data, {
+      const res = await axios.post(`${import.meta.env.VITE_BACK_END_URL}/api/auth/signup`, data, {
         headers: { "Content-Type": "application/json" },
       });
 

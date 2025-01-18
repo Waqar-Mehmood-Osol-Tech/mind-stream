@@ -480,7 +480,7 @@ export default function UpdatePost() {
     const fetchPost = async () => {
       try {
         setIsLoading(true);
-        const res = await axios.get(`/api/post/getposts?postId=${postId}`);
+        const res = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/post/getposts?postId=${postId}`);
         const data = res.data;
 
         if (!res) {
@@ -629,7 +629,7 @@ export default function UpdatePost() {
     try {
       setLoading(true);
       const res = await axios.put(
-        `/api/post/updatepost/${postId}/${currentUser._id}`,
+        `${import.meta.env.VITE_BACK_END_URL}/api/post/updatepost/${postId}/${currentUser._id}`,
         { ...data, image: thumbnail },
         {
           headers: {

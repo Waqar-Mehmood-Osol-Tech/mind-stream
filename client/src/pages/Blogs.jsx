@@ -43,7 +43,7 @@ export default function BlogsPage() {
   const fetchAllBlogs = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`/api/post/getAllPosts`);
+      const res = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/post/getAllPosts`);
       if (res && Array.isArray(res.data.posts)) {
         setAllBlogs(res.data.posts);
       } else {

@@ -22,7 +22,7 @@ export default function AuthorProfilePage() {
   const fetchUserProfile = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`/api/user/${userId}`);
+      const res = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/user/${userId}`);
       setUser(res.data);
     } catch (error) {
       setError("Failed to load user profile. Please try again later.");
@@ -35,7 +35,7 @@ export default function AuthorProfilePage() {
   const fetchPosts = async () => {
     try {
       setLoadingPost(true);
-      const res = await axios.get(`/api/post/getposts?userId=${userId}`);
+      const res = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/post/getposts?userId=${userId}`);
       if (res.data?.posts) {
         setUserPosts(res.data.posts);
         setShowMore(res.data.posts.length >= 6);
@@ -52,7 +52,7 @@ export default function AuthorProfilePage() {
     try {
       const startIndex = userPosts.length;
       const res = await axios.get(
-        `/api/post/getPosts?userId=${userId}&startIndex=${startIndex}`
+        `${import.meta.env.VITE_BACK_END_URL}/api/post/getPosts?userId=${userId}&startIndex=${startIndex}`
       );
       if (res.data?.posts) {
         setUserPosts((prev) => [...prev, ...res.data.posts]);

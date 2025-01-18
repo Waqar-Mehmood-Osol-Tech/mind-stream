@@ -38,7 +38,7 @@ export default function DashboardPage() {
 
   const handleSignOut = async () => {
     try {
-      await axios.post("/api/user/logout");
+      await axios.post(`${import.meta.env.VITE_BACK_END_URL}/api/user/logout`);
       dispatch(signoutSuccess());
       navigate("/sign-in");
     } catch (error) {
@@ -51,7 +51,7 @@ export default function DashboardPage() {
     try {
       setLoading(true);
       const res = await axios.get(
-        `/api/post/getposts?userId=${currentUser._id}`
+        `${import.meta.env.VITE_BACK_END_URL}/api/post/getposts?userId=${currentUser._id}`
       );
 
       const data = res.data;
@@ -75,7 +75,7 @@ export default function DashboardPage() {
     try {
       setLoading(true);
       const res = await axios.get(
-        `/api/post/getPosts?userId=${currentUser._id}&startIndex=${startIndex}`
+        `${import.meta.env.VITE_BACK_END_URL}/api/post/getPosts?userId=${currentUser._id}&startIndex=${startIndex}`
       );
 
       const data = res.data;
@@ -97,7 +97,7 @@ export default function DashboardPage() {
     setShowModal(false);
     try {
       const res = await axios.delete(
-        `/api/post/deletePost/${postIdToDelete}/${currentUser._id}`
+        `${import.meta.env.VITE_BACK_END_URL}/api/post/deletePost/${postIdToDelete}/${currentUser._id}`
       );
 
       if (res.status !== 200) {

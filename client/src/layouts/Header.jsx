@@ -62,7 +62,7 @@ export default function Header() {
 
   const logout = async () => {
     try {
-      await axios.post("/api/user/logout");
+      await axios.post(`${import.meta.env.VITE_BACK_END_URL}/api/user/logout`);
       dispatch(signoutSuccess());
       localStorage.clear();
       navigate("/sign-in");

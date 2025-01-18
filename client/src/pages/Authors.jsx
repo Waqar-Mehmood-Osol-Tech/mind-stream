@@ -22,7 +22,7 @@ export default function AuthorsPage() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("/api/user/getusers");
+      const res = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/user/getusers`);
       if (res.status === 200) {
         // Logic to exclude the currently logged in user...
         // const filteredUsers = currentUser
@@ -49,7 +49,7 @@ export default function AuthorsPage() {
 
   const fetchPostCount = async (authorId, totalUsers) => {
     try {
-      const res = await axios.get(`/api/post/getposts?userId=${authorId}`);
+      const res = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/post/getposts?userId=${authorId}`);
       if (res && Array.isArray(res.data.posts)) {
         setPostCounts((prev) => {
           const updatedCounts = {
@@ -85,7 +85,7 @@ export default function AuthorsPage() {
     const startIndex = users.length;
     try {
       const res = await axios.get(
-        `/api/user/getusers?startIndex=${startIndex}`
+        `${import.meta.env.VITE_BACK_END_URL}/api/user/getusers?startIndex=${startIndex}`
       );
       if (res.status === 200) {
         const newUsers = res.data.users;
