@@ -62,6 +62,7 @@ const SignUp = () => {
 
       const res = await axios.post(`${import.meta.env.VITE_BACK_END_URL}/api/auth/signup`, data, {
         headers: { "Content-Type": "application/json" },
+        withCredentials: true,
       });
 
       const responseData = res.data;

@@ -635,6 +635,7 @@ export default function UpdatePost() {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true,
         }
       );
       if (res) {

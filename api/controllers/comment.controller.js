@@ -43,24 +43,59 @@ export const getPostComments = async (req, res, next) => {
   }
 };
 
+// export const likeComment = async (req, res, next) => {
+//   try {
+//     const comment = await Comment.findById(req.params.commentId);
+//     if (!comment) {
+//       return next(errorHandler(404, "Comment not found"));
+//     }
+//     const userIndex = comment.likes.indexOf(req.user.id);
+//     if (userIndex === -1) {
+//       comment.numberOfLikes += 1;
+//       comment.likes.push(req.user.id);
+//     } else {
+//       comment.numberOfLikes -= 1;
+//       comment.likes.splice(userIndex, 1);
+//     }
+//     await comment.save();
+//     res.status(200).json(comment);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 export const likeComment = async (req, res, next) => {
   try {
-    const comment = await Comment.findById(req.params.commentId);
+    const { commentId } = req.params;
+
+    const comment = await Comment.findById(commentId);
     if (!comment) {
       return next(errorHandler(404, "Comment not found"));
     }
+
     const userIndex = comment.likes.indexOf(req.user.id);
+
     if (userIndex === -1) {
-      comment.numberOfLikes += 1;
+      // User hasn't liked the comment yet
+      comment.numberOfLikes = (comment.numberOfLikes || 0) + 1;
       comment.likes.push(req.user.id);
     } else {
+      // User already liked the comment, so unlike it
       comment.numberOfLikes -= 1;
       comment.likes.splice(userIndex, 1);
     }
+
     await comment.save();
-    res.status(200).json(comment);
+
+    // Return only the necessary fields
+    res.status(200).json({
+      commentId: comment._id,
+      likes: comment.likes,
+      numberOfLikes: comment.numberOfLikes,
+    });
   } catch (error) {
-    next(error);
+    console.error("Error liking comment:", error);
+    next(errorHandler(500, "Something went wrong. Please try again."));
   }
 };
 
@@ -172,22 +207,56 @@ export const createReply = async (req, res, next) => {
   }
 };
 
+// export const likeReply = async (req, res, next) => {
+//   try {
+//     const comment = await Comment.findOne({
+//       _id: req.params.commentId,
+//       "replies._id": req.params.replyId,
+//     });
+
+//     if (!comment) {
+//       return next(errorHandler(404, "Comment or reply not found"));
+//     }
+
+//     const reply = comment.replies.id(req.params.replyId);
+//     const userIndex = reply.likes.indexOf(req.user.id);
+
+//     if (userIndex === -1) {
+//       reply.numberOfLikes += 1;
+//       reply.likes.push(req.user.id);
+//     } else {
+//       reply.numberOfLikes -= 1;
+//       reply.likes.splice(userIndex, 1);
+//     }
+
+//     await comment.save();
+//     res.status(200).json(comment);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 export const likeReply = async (req, res, next) => {
   try {
-    const comment = await Comment.findOne({
-      _id: req.params.commentId,
-      "replies._id": req.params.replyId,
-    });
+    const { commentId, replyId } = req.params;
 
+    const comment = await Comment.findOne({
+      _id: commentId,
+      "replies._id": replyId,
+    });
     if (!comment) {
       return next(errorHandler(404, "Comment or reply not found"));
     }
 
-    const reply = comment.replies.id(req.params.replyId);
+    const reply = comment.replies.id(replyId);
+    if (!reply) {
+      return next(errorHandler(404, "Reply not found"));
+    }
+
     const userIndex = reply.likes.indexOf(req.user.id);
 
     if (userIndex === -1) {
-      reply.numberOfLikes += 1;
+      reply.numberOfLikes = (reply.numberOfLikes || 0) + 1;
       reply.likes.push(req.user.id);
     } else {
       reply.numberOfLikes -= 1;
@@ -195,9 +264,14 @@ export const likeReply = async (req, res, next) => {
     }
 
     await comment.save();
-    res.status(200).json(comment);
+    res.status(200).json({
+      replyId,
+      likes: reply.likes,
+      numberOfLikes: reply.numberOfLikes,
+    });
   } catch (error) {
-    next(error);
+    console.error("Error liking reply:", error);
+    next(errorHandler(500, "Something went wrong. Please try again."));
   }
 };
 

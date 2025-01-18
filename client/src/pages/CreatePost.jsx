@@ -565,6 +565,7 @@ export default function CreatePost() {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true,
         }
       );
       if (res) {
@@ -595,7 +596,9 @@ export default function CreatePost() {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-3xl bg-purple-100 shadow-lg rounded-lg p-4 mt-12"
       >
-        <h2 className="text-3xl font-bold text-center mb-8">Bring Ideas to Life</h2>
+        <h2 className="text-3xl font-bold text-center mb-8">
+          Bring Ideas to Life
+        </h2>
 
         <div className="mb-6">
           <label htmlFor="title" className="block text-lg font-medium mb-2">

@@ -461,11 +461,17 @@ export default function CommentSection({ postId }) {
       return;
     }
     try {
-      const res = await axios.post(`${import.meta.env.VITE_BACK_END_URL}/api/comment/create`, {
-        content: comment,
-        postId,
-        userId: currentUser._id,
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACK_END_URL}/api/comment/create`,
+        {
+          content: comment,
+          postId,
+          userId: currentUser._id,
+        },
+        {
+          withCredentials: true,
+        }
+      );
       setComment("");
       setCommentError(null);
       setComments([res.data, ...comments]);
@@ -477,7 +483,11 @@ export default function CommentSection({ postId }) {
   useEffect(() => {
     const getComments = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/comment/getPostComments/${postId}`);
+        const res = await axios.get(
+          `${
+            import.meta.env.VITE_BACK_END_URL
+          }/api/comment/getPostComments/${postId}`
+        );
         setComments(res.data);
       } catch (error) {
         console.error(error.response?.data?.message || error.message);
@@ -486,20 +496,77 @@ export default function CommentSection({ postId }) {
     getComments();
   }, [postId]);
 
+  // const handleLike = async (commentId) => {
+  //   try {
+  //     if (!currentUser) {
+  //       navigate("/sign-in");
+  //       return;
+  //     }
+  //     const res = await axios.put(
+  //       `${
+  //         import.meta.env.VITE_BACK_END_URL
+  //       }/api/comment/likeComment/${commentId}`,
+  //       {
+  //         withCredentials: true,
+  //       }
+  //     );
+  //     setComments(
+  //       comments.map((comment) =>
+  //         comment._id === commentId
+  //           ? {
+  //               ...comment,
+  //               likes: res.data.likes,
+  //               numberOfLikes: res.data.likes.length,
+  //             }
+  //           : comment
+  //       )
+  //     );
+  //   } catch (error) {
+  //     console.error(error.response?.data?.message || error.message);
+  //   }
+  // };
+
   const handleLike = async (commentId) => {
+    if (!currentUser) {
+      navigate("/sign-in");
+      return;
+    }
+
     try {
-      if (!currentUser) {
-        navigate("/sign-in");
-        return;
-      }
-      const res = await axios.put(`${import.meta.env.VITE_BACK_END_URL}/api/comment/likeComment/${commentId}`);
-      setComments(
-        comments.map((comment) =>
+      // Optimistic update
+      setComments((prevComments) =>
+        prevComments.map((comment) =>
           comment._id === commentId
             ? {
                 ...comment,
-                likes: res.data.likes,
-                numberOfLikes: res.data.likes.length,
+                numberOfLikes: comment.likes.includes(currentUser.id)
+                  ? comment.numberOfLikes - 1
+                  : comment.numberOfLikes + 1,
+                likes: comment.likes.includes(currentUser.id)
+                  ? comment.likes.filter((id) => id !== currentUser.id)
+                  : [...comment.likes, currentUser.id],
+              }
+            : comment
+        )
+      );
+
+      // API request to like/unlike the comment
+      const { data } = await axios.put(
+        `${
+          import.meta.env.VITE_BACK_END_URL
+        }/api/comment/likeComment/${commentId}`,
+        null, // No body required
+        { withCredentials: true }
+      );
+
+      // Ensure backend response updates the state
+      setComments((prevComments) =>
+        prevComments.map((comment) =>
+          comment._id === commentId
+            ? {
+                ...comment,
+                likes: data.likes,
+                numberOfLikes: data.numberOfLikes,
               }
             : comment
         )
@@ -524,7 +591,14 @@ export default function CommentSection({ postId }) {
         navigate("/sign-in");
         return;
       }
-      await axios.delete(`${import.meta.env.VITE_BACK_END_URL}/api/comment/deleteComment/${commentId}`);
+      await axios.delete(
+        `${
+          import.meta.env.VITE_BACK_END_URL
+        }/api/comment/deleteComment/${commentId}`,
+        {
+          withCredentials: true,
+        }
+      );
       setComments(comments.filter((comment) => comment._id !== commentId));
     } catch (error) {
       console.error(error.response?.data?.message || error.message);

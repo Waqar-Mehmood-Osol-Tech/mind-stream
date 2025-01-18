@@ -8,7 +8,7 @@ router.get("/test", test);
 router.put("/update/:userId", verifyToken, updateUser);
 router.delete('/delete/:userId', verifyToken, deleteUser)
 router.post('/logout', logout);
-router.get('/getUsers', getUsers) // add verifyToken to restrict the access
+router.get('/getUsers', getUsers)
 router.get('/:userId', getUser);
 
 export default router;

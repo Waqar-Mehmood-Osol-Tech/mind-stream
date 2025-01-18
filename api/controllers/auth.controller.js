@@ -31,9 +31,7 @@ export const signup = async (req, res, next) => {
   try {
     await newUser.save();
 
-    const verificationURL = `${req.protocol}://${req.get(
-      "host"
-    )}/api/auth/verify-email/${verificationToken}`;
+    const verificationURL = `${process.env.FRONT_END_URL}/verify-email/${verificationToken}`;
 
     // For Real Emails.....
     const transporter = nodemailer.createTransport({
@@ -272,9 +270,7 @@ export const google = async (req, res, next) => {
       });
       await newUser.save();
 
-      const verificationURL = `${req.protocol}://${req.get(
-        "host"
-      )}/api/auth/verify-email/${verificationToken}`;
+      const verificationURL = `${process.env.FRONT_END_URL}/verify-email/${verificationToken}`;
 
       const transporter = nodemailer.createTransport({
         service: "Gmail",
@@ -333,9 +329,9 @@ export const forgotPassword = async (req, res, next) => {
     // console.log("Generated Reset Token (Hashed):", hashedToken);
 
     // Send email
-    const resetURL = `${req.protocol}://${req.get(
-      "host"
-    )}/reset-password/${encodeURIComponent(resetToken)}`;
+    const resetURL = `${
+      process.env.FRONT_END_URL
+    }/reset-password/${encodeURIComponent(resetToken)}`;
 
     const transporter = nodemailer.createTransport({
       service: "Gmail",
@@ -474,21 +470,52 @@ export const resetPassword = async (req, res, next) => {
   }
 };
 
-// Verify Email
+// // Verify Email
+// export const verifyEmail = async (req, res, next) => {
+//   const { token } = req.params;
+
+//   try {
+//     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+//     const user = await User.findOne({
+//       emailVerificationToken: hashedToken,
+//       emailVerificationExpires: { $gt: Date.now() },
+//     });
+
+//     if (!user) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "Invalid or expired token." });
+//     }
+
+//     user.isVerified = true;
+//     user.emailVerificationToken = undefined;
+//     user.emailVerificationExpires = undefined;
+//     await user.save();
+
+//     res
+//       .status(200)
+//       .json({ success: true, message: "Email verified successfully!" });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 export const verifyEmail = async (req, res, next) => {
   const { token } = req.params;
 
   try {
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+   
     const user = await User.findOne({
       emailVerificationToken: hashedToken,
       emailVerificationExpires: { $gt: Date.now() },
     });
 
     if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid or expired token." });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired token.",
+      });
     }
 
     user.isVerified = true;
@@ -500,6 +527,7 @@ export const verifyEmail = async (req, res, next) => {
       .status(200)
       .json({ success: true, message: "Email verified successfully!" });
   } catch (error) {
+    console.error("Error in email verification:", error);
     next(error);
   }
 };

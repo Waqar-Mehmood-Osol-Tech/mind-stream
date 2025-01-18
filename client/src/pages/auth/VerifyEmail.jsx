@@ -8,27 +8,32 @@ const VerifyEmail = () => {
   const navigate = useNavigate();
   const [status, setStatus] = useState("loading");
   const [message, setMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const verifyEmail = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACK_END_URL}/api/auth/verify-email/${token}`
+      );
+      if (res.status === 200) {
+        setStatus("success");
+        setMessage("Email verified successfully! Redirecting to sign-in...");
+        setTimeout(() => navigate("/sign-in"), 3000); // Redirect after 3 seconds
+      }
+    } catch (error) {
+      setTimeout(() => setStatus("error"), 5000); // Redirect after 5 seconds
+
+      setErrorMessage(
+        error.response?.data?.message ||
+          "Verification failed. Invalid or expired token."
+      );
+    }
+  };
+
 
   useEffect(() => {
-    const verifyEmail = async () => {
-      try {
-        const res = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/auth/verify-email/${token}`);
-        if (res.status === 200) {
-          setMessage("Email verified successfully! Redirecting to sign-in...");
-          setStatus("success");
-          setTimeout(() => navigate("/sign-in"), 3000); // Redirect after 3 seconds
-        }
-      } catch (error) {
-        setMessage(
-          error.response?.data?.message ||
-            "Verification failed. Invalid or expired token."
-        );
-        setStatus("error");
-      }
-    };
-
     verifyEmail();
-  }, [token, navigate]);
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-purple-900 to-black">
@@ -40,7 +45,7 @@ const VerifyEmail = () => {
           <Spinner size="lg" />
         ) : (
           <Alert color={status === "success" ? "success" : "failure"}>
-            {message}
+            {status === "success" ? message : errorMessage}
           </Alert>
         )}
       </div>

@@ -412,6 +412,7 @@ import { FaThumbsUp, FaReply } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import Popup from "./modal/ErrorAndSuccesPopup";
+import { useNavigate } from "react-router-dom";
 
 const Reply = ({ reply, onLike, onEdit, onDelete, commentId }) => {
   const [user, setUser] = useState({});
@@ -424,7 +425,12 @@ const Reply = ({ reply, onLike, onEdit, onDelete, commentId }) => {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const { data } = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/user/${reply.userId}`);
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_BACK_END_URL}/api/user/${reply.userId}`,
+          {
+            withCredentials: true,
+          }
+        );
         setUser(data);
       } catch (error) {
         console.error(error.message);
@@ -440,9 +446,17 @@ const Reply = ({ reply, onLike, onEdit, onDelete, commentId }) => {
 
   const handleSave = async () => {
     try {
-      await axios.put(`${import.meta.env.VITE_BACK_END_URL}/api/comment/editReply/${commentId}/${reply._id}`, {
-        content: editedContent,
-      });
+      await axios.put(
+        `${
+          import.meta.env.VITE_BACK_END_URL
+        }/api/comment/editReply/${commentId}/${reply._id}`,
+        {
+          content: editedContent,
+        },
+        {
+          withCredentials: true,
+        }
+      );
       setIsEditing(false);
       onEdit(commentId, reply._id, editedContent);
     } catch (error) {
@@ -586,7 +600,7 @@ export default function Comment({
   onEdit,
   onDelete,
   onReply,
-  onLikeReply,
+  // onLikeReply,
   onEditReply,
   onDeleteReply,
 }) {
@@ -599,11 +613,17 @@ export default function Comment({
   const [replyContent, setReplyContent] = useState("");
   const [replies, setReplies] = useState(comment.replies);
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getUser = async () => {
       try {
-        const { data } = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/api/user/${comment.userId}`);
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_BACK_END_URL}/api/user/${comment.userId}`,
+          {
+            withCredentials: true,
+          }
+        );
         setUser(data);
       } catch (error) {
         console.error(error.message);
@@ -623,9 +643,17 @@ export default function Comment({
 
   const handleSave = async () => {
     try {
-      await axios.put(`${import.meta.env.VITE_BACK_END_URL}/api/comment/editComment/${comment._id}`, {
-        content: editedContent,
-      });
+      await axios.put(
+        `${import.meta.env.VITE_BACK_END_URL}/api/comment/editComment/${
+          comment._id
+        }`,
+        {
+          content: editedContent,
+        },
+        {
+          withCredentials: true,
+        }
+      );
       setIsEditing(false);
       onEdit(comment, editedContent);
     } catch (error) {
@@ -646,6 +674,9 @@ export default function Comment({
           content: replyContent,
           commentId: comment._id,
           userId: currentUser._id,
+        },
+        {
+          withCredentials: true,
         }
       );
       setReplies(updatedComment.replies);
@@ -659,7 +690,14 @@ export default function Comment({
 
   const handleDeleteReply = async (commentId, replyId) => {
     try {
-      await axios.delete(`${import.meta.env.VITE_BACK_END_URL}/api/comment/deleteReply/${commentId}/${replyId}`);
+      await axios.delete(
+        `${
+          import.meta.env.VITE_BACK_END_URL
+        }/api/comment/deleteReply/${commentId}/${replyId}`,
+        {
+          withCredentials: true,
+        }
+      );
       setReplies(replies.filter((reply) => reply._id !== replyId));
       onDeleteReply(commentId, replyId);
     } catch (error) {
@@ -676,15 +714,47 @@ export default function Comment({
     onEditReply(commentId, replyId, newContent);
   };
 
+  // const handleLikeReply = async (commentId, replyId) => {
+  //   try {
+  //     const { data: updatedComment } = await axios.put(
+  //       `${import.meta.env.VITE_BACK_END_URL}/api/comment/likeReply/${commentId}/${replyId}`,
+  //       {
+  //         withCredentials: true,
+  //       }
+  //     );
+  //     setReplies(updatedComment.replies);
+  //     onLikeReply(commentId, replyId);
+  //   } catch (error) {
+  //     console.error(error.message);
+  //   }
+  // };
+
   const handleLikeReply = async (commentId, replyId) => {
+    if (!currentUser) {
+      navigate("/sign-in");
+      return;
+    }
+
     try {
-      const { data: updatedComment } = await axios.put(
-        `${import.meta.env.VITE_BACK_END_URL}/api/comment/likeReply/${commentId}/${replyId}`
+      const { data } = await axios.put(
+        `${
+          import.meta.env.VITE_BACK_END_URL
+        }/api/comment/likeReply/${commentId}/${replyId}`,
+        null, // Empty body
+        { withCredentials: true }
       );
-      setReplies(updatedComment.replies);
-      onLikeReply(commentId, replyId);
+
+      setReplies((prevReplies) =>
+        prevReplies.map((reply) =>
+          reply._id === replyId
+            ? { ...reply, likes: data.likes, numberOfLikes: data.numberOfLikes }
+            : reply
+        )
+        
+      );
     } catch (error) {
-      console.error(error.message);
+      console.error(error.response?.data?.message || error.message);
+      // showToast("Failed to like the reply. Please try again.");
     }
   };
 

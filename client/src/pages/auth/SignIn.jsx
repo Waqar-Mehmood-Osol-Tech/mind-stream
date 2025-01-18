@@ -1,13 +1,14 @@
 /* eslint-disable react/no-unknown-property */
 import axios from "axios";
 import { Alert, Spinner } from "flowbite-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   signInSuccess,
   signInFailure,
   signInStart,
+  clearError,
 } from "../../redux/user/userSlice";
 import OAuth from "../../components/OAuth";
 import { Eye, EyeOff } from "lucide-react";
@@ -28,6 +29,12 @@ const SignIn = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    return () => {
+      dispatch(clearError());
+    };
+  }, [dispatch]);
+
   const {
     register,
     handleSubmit,
@@ -40,9 +47,14 @@ const SignIn = () => {
     try {
       dispatch(signInStart());
 
-      const res = await axios.post(`${import.meta.env.VITE_BACK_END_URL}/api/auth/signin`, data, {
-        headers: { "Content-Type": "application/json" },
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACK_END_URL}/api/auth/signin`,
+        data,
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
 
       const responseData = res.data;
 

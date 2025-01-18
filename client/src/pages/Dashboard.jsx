@@ -51,7 +51,9 @@ export default function DashboardPage() {
     try {
       setLoading(true);
       const res = await axios.get(
-        `${import.meta.env.VITE_BACK_END_URL}/api/post/getposts?userId=${currentUser._id}`
+        `${import.meta.env.VITE_BACK_END_URL}/api/post/getposts?userId=${
+          currentUser._id
+        }`
       );
 
       const data = res.data;
@@ -75,7 +77,9 @@ export default function DashboardPage() {
     try {
       setLoading(true);
       const res = await axios.get(
-        `${import.meta.env.VITE_BACK_END_URL}/api/post/getPosts?userId=${currentUser._id}&startIndex=${startIndex}`
+        `${import.meta.env.VITE_BACK_END_URL}/api/post/getPosts?userId=${
+          currentUser._id
+        }&startIndex=${startIndex}`
       );
 
       const data = res.data;
@@ -97,7 +101,15 @@ export default function DashboardPage() {
     setShowModal(false);
     try {
       const res = await axios.delete(
-        `${import.meta.env.VITE_BACK_END_URL}/api/post/deletePost/${postIdToDelete}/${currentUser._id}`
+        `${
+          import.meta.env.VITE_BACK_END_URL
+        }/api/post/deletePost/${postIdToDelete}/${currentUser._id}`,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
 
       if (res.status !== 200) {
