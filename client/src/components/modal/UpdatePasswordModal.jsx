@@ -51,7 +51,7 @@ function UpdatePasswordModal({ isModalOpen, closeModal }) {
 
   const onSubmit = async (data) => {
     try {
-      await axios.post(`/api/auth/update-password/${currentUser._id}`, data, {
+      await axios.post(`${import.meta.env.VITE_BACK_END_URL}/api/auth/update-password/${currentUser._id}`, data, {
         withCredentials: true,
       });
       setSuccess("Password updated successfully!");
