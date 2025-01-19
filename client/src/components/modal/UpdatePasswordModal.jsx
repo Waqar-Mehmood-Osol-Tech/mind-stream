@@ -68,6 +68,7 @@ function UpdatePasswordModal({ isModalOpen, closeModal }) {
 
   const closeModalFunc = () => {
     clearErrors();
+    reset();
     closeModal();
   };
 

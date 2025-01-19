@@ -460,7 +460,7 @@ const Reply = ({ reply, onLike, onEdit, onDelete, commentId }) => {
       setIsEditing(false);
       onEdit(commentId, reply._id, editedContent);
     } catch (error) {
-      setEditReplyError(error.response.data.message);
+      setEditReplyError(error.response?.data?.message);
       console.error(error.message);
     }
   };
