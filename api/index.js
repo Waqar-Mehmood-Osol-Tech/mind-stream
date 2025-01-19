@@ -10,6 +10,8 @@ import cors from "cors";
 
 dotenv.config();
 
+console.log("My Branch Mind Stream")
+
 mongoose
   .connect(process.env.MONGO)
   .then(() => {
