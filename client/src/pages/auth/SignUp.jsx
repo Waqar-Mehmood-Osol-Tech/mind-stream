@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Alert, Spinner } from "flowbite-react";
-// import OAuth from "../../components/OAuth";
+import OAuth from "../../components/OAuth";
 import { Eye, EyeOff } from "lucide-react";
 import logo from "../../assets/logo.png";
 import { useForm } from "react-hook-form";
@@ -143,10 +143,10 @@ const SignUp = () => {
             <h2 className="text-3xl font-bold text-purple-700 my-4">Sign Up</h2>
           </div>
 
-          {/* Google Sign Up
+          {/* Google Sign Up */}
           <OAuth />
 
-          <div className="text-center my-4 text-gray-500">or</div> */}
+          <div className="text-center my-4 text-gray-500">or</div>
 
           {/* Sign Up Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

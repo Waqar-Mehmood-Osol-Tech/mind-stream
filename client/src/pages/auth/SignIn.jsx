@@ -10,7 +10,7 @@ import {
   signInStart,
   clearError,
 } from "../../redux/user/userSlice";
-// import OAuth from "../../components/OAuth";
+import OAuth from "../../components/OAuth";
 import { Eye, EyeOff } from "lucide-react";
 import logo from "../../assets/logo.png";
 import { useForm } from "react-hook-form";
@@ -132,10 +132,10 @@ const SignIn = () => {
             </h2>
           </div>
 
-          {/* Google Sign In
+         {/* Google Sign In */}
           <OAuth />
 
-          <div className="text-center my-4 text-gray-500">or</div> */}
+          <div className="text-center my-4 text-gray-500">or</div>
 
           {/* Email and Password Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
