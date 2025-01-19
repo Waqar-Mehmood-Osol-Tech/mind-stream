@@ -1,10 +1,10 @@
 import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
 import { app } from "../firebase";
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-import { signInSuccess } from '../redux/user/userSlice.js';
+import { signInSuccess } from "../redux/user/userSlice.js";
 
 function OAuth() {
   const navigate = useNavigate();
@@ -15,11 +15,15 @@ function OAuth() {
     provider.setCustomParameters({ prompt: "select_account" });
     try {
       const resultsFromGoogle = await signInWithPopup(auth, provider);
-      const res = await axios.post(`${import.meta.env.VITE_BACK_END_URL}/api/auth/google`, {
-        name: resultsFromGoogle.user.displayName,
-        email: resultsFromGoogle.user.email,
-        googlePhotoUrl: resultsFromGoogle.user.photoURL,
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACK_END_URL}/api/auth/google`,
+        {
+          name: resultsFromGoogle.user.displayName,
+          email: resultsFromGoogle.user.email,
+          googlePhotoUrl: resultsFromGoogle.user.photoURL,
+        },
+        { withCredentials: true }
+      );
 
       if (res.status === 200) {
         dispatch(signInSuccess(res.data));
