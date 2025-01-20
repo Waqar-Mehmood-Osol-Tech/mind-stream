@@ -1,6 +1,8 @@
 import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import User from "../models/user.model.js";
+import Post from "../models/post.model.js";
+import Comment from "../models/comment.model.js";
 
 export const test = (req, res) => {
   res.json({ message: `API is working!` });
@@ -12,17 +14,12 @@ export const updateUser = async (req, res, next) => {
     return next(errorHandler(403, "You are not allowed to update this user"));
   }
 
-  if(!req.body.username){
-    return next(
-      errorHandler(400, "Full name is required.")
-    );
+  if (!req.body.username) {
+    return next(errorHandler(400, "Full name is required."));
   }
 
-
-  if(!req.body.headline){
-    return next(
-      errorHandler(400, "Headline is required.")
-    );
+  if (!req.body.headline) {
+    return next(errorHandler(400, "Headline is required."));
   }
 
   if (req.body.headline) {
@@ -30,7 +27,6 @@ export const updateUser = async (req, res, next) => {
       return next(errorHandler(400, "headline must not exceed 150 characters"));
     }
   }
-
 
   if (req.body.username) {
     if (req.body.username.length < 7 || req.body.username.length > 20) {
@@ -87,16 +83,60 @@ export const updateUser = async (req, res, next) => {
 };
 
 // Delete User Controller
+// export const deleteUser = async (req, res, next) => {
+//   if (req.user.id !== req.params.userId) {
+//     return next(
+//       errorHandler(403, "You  are not allowed to delete the account")
+//     );
+//   }
+
+//   try {
+//     await User.findByIdAndDelete(req.params.userId);
+//     res.status(200).json("User has been deleted.");
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+import bcrypt from "bcryptjs";
+
 export const deleteUser = async (req, res, next) => {
-  if (req.user.id !== req.params.userId) {
+  const { userId } = req.params;
+  const { password } = req.body;
+
+  // Ensure only the user can delete their account
+  if (req.user.id !== userId) {
     return next(
-      errorHandler(403, "You  are not allowed to delete the account")
+      errorHandler(403, "You are not allowed to delete this account.")
     );
   }
 
   try {
-    await User.findByIdAndDelete(req.params.userId);
-    res.status(200).json("User has been deleted.");
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(errorHandler(404, "User not found."));
+    }
+
+    // Verify the password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return next(errorHandler(401, "Incorrect password."));
+    }
+
+    // Delete all posts by the user
+    await Post.deleteMany({ userId });
+
+    // Delete all comments and replies by the user
+    await Comment.updateMany(
+      { "replies.userId": userId }, // Find comments where the user made replies
+      { $pull: { replies: { userId } } } // Remove those replies
+    );
+    await Comment.deleteMany({ userId }); // Delete all comments directly by the user
+
+    // Delete the user
+    await User.findByIdAndDelete(userId);
+
+    res.status(200).json("User and associated data have been deleted.");
   } catch (error) {
     next(error);
   }

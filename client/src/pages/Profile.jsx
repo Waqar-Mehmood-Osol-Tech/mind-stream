@@ -37,6 +37,8 @@ const ProfilePage = () => {
   const [updateUserError, setUpdateUserError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [userPosts, setUserPosts] = useState([]);
+  const [password, setPassword] = useState("");
+  const [apiMessage, setApiMessage] = useState("");
 
   const [formData, setFormData] = useState({
     username: currentUser.username || "",
@@ -62,26 +64,61 @@ const ProfilePage = () => {
     setIsEditing(false);
   };
 
+  // const handleDelete = async () => {
+  //   setShowModal(false);
+  //   try {
+  //     dispatch(deleteUserStart());
+  //     setLoading(true);
+  //     const res = await axios.delete(
+  //       `${import.meta.env.VITE_BACK_END_URL}/api/user/delete/${
+  //         currentUser._id
+  //       }`,
+  //       {
+  //         withCredentials: true,
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  //     dispatch(deleteUserSuccess(res.data));
+  //   } catch (error) {
+  //     const errorMessage = error.response?.data?.message || error.message;
+  //     dispatch(deleteUserFailure(errorMessage));
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleDelete = async () => {
-    setShowModal(false);
+    if (!password.trim()) {
+      setApiMessage("Please enter your password."); // Validation message
+      return;
+    }
+
     try {
       dispatch(deleteUserStart());
       setLoading(true);
+      setApiMessage(""); // Clear previous messages
+
       const res = await axios.delete(
         `${import.meta.env.VITE_BACK_END_URL}/api/user/delete/${
           currentUser._id
         }`,
         {
-          withCredentials: true, 
+          withCredentials: true,
           headers: {
             "Content-Type": "application/json",
           },
+          data: { password }, // Send password in the request body
         }
       );
+
       dispatch(deleteUserSuccess(res.data));
+      setApiMessage("Account deleted successfully."); // Success message
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
       dispatch(deleteUserFailure(errorMessage));
+      setApiMessage(`Error: ${errorMessage}`); // Error message
     } finally {
       setLoading(false);
     }
@@ -209,307 +246,6 @@ const ProfilePage = () => {
       <Loader />
     </div>
   ) : (
-    // <div className="h-fit bg-gradient-to-b from-purple-50 to-white flex  justify-center p-4 ">
-    //   <div className="bg-white rounded-lg shadow-xl overflow-hidden w-full max-w-2xl">
-    //     <div
-    //       className="relative h-48"
-    //       style={{
-    //         background:
-    //           "linear-gradient(90deg, rgba(17,4,51,1) 0%, rgba(70,5,99,1) 35%, rgba(124,23,186,1) 100%)",
-    //       }}
-    //     >
-    //       <div className="w-full h-full object-coverbg-gradient-to-r from-black via-purple-900 to-black" />
-    //     </div>
-    //     <form onSubmit={handleSubmit}>
-    //       <div className="relative px-4 py-5 sm:p-6">
-    //         <input
-    //           type="file"
-    //           accept="image/*"
-    //           onChange={handleImageChange}
-    //           ref={filePickerRef}
-    //           hidden
-    //         />
-    //         <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
-    //           {isEditing ? (
-    //             <div
-    //               onClick={() => filePickerRef.current.click()}
-    //               className="cursor-pointer"
-    //             >
-    //               {imageFileUploadProgress && (
-    //                 <CircularProgressbar
-    //                   value={imageFileUploadProgress || 0}
-    //                   strokeWidth={5}
-    //                   styles={{
-    //                     root: {
-    //                       width: "100%",
-    //                       height: "100%",
-    //                       position: "absolute",
-    //                       top: 0,
-    //                       left: 0,
-    //                       color: "purple",
-    //                     },
-    //                     path: {
-    //                       stroke: `rgba(128, 0, 128, ${
-    //                         imageFileUploadProgress / 100
-    //                       })`,
-    //                     },
-    //                   }}
-    //                 />
-    //               )}
-    //               <img
-    //                 src={imageFileUrl || currentUser.profilePicture}
-    //                 alt="Profile picture"
-    //                 className={`w-32 h-32 rounded-full border-4 border-white ${
-    //                   imageFileUploadProgress &&
-    //                   imageFileUploadProgress < 100 &&
-    //                   "opacity-60"
-    //                 }`}
-    //               />
-    //             </div>
-    //           ) : (
-    //             <img
-    //               src={currentUser.profilePicture}
-    //               alt="Profile picture"
-    //               className="w-32 h-32 rounded-full border-4 border-white"
-    //             />
-    //           )}
-    //         </div>
-
-    //         {/* Error for Image uplaod file Error */}
-    //         {imageFileUploadError && (
-    //           <Popup
-    //             message={imageFileUploadError}
-    //             type="error"
-    //             onClose={() => setImageFileUploadError(null)}
-    //           />
-    //         )}
-    //         <div className="mt-16">
-    //           {isEditing ? (
-    //             <div className="text-left">
-    //               <label
-    //                 htmlFor="username"
-    //                 className="block text-lg font-semibold text-gray-900 mb-2"
-    //               >
-    //                 Full Name <span className="text-red-600">*</span>
-    //               </label>
-    //               <input
-    //                 id="username"
-    //                 type="text"
-    //                 name="username"
-    //                 value={formData.username}
-    //                 onChange={handleChange}
-    //                 className="block w-full text-2xl font-bold text-gray-900 bg-gray-100 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
-    //               />
-    //             </div>
-    //           ) : (
-    //             <h2 className="text-2xl font-bold text-gray-900 text-center">
-    //               {currentUser.username}
-    //             </h2>
-    //           )}
-    //         </div>
-
-    //         <div className="mt-4 flex justify-center space-x-4 text-sm text-gray-500">
-    //           <div>
-    //             Blogs Published
-    //             <span className="font-semibold text-purple-600">
-    //               : {userPosts.length}
-    //             </span>{" "}
-    //           </div>
-    //         </div>
-
-    //         <div className="flex w-full justify-center mt-4">
-    //           {isEditing ? (
-    //             // <input
-    //             //   id="email"
-    //             //   type="email"
-    //             //   name="email"
-    //             //   value={formData.email}
-    //             //   onChange={handleChange}
-    //             //   className="font-semibol text-sm text-gray-900 bg-gray-100 border border-gray-300 rounded w-1/2 py-1"
-    //             // />
-    //             <h2 className=" text-gray-900 font-semibold">
-    //               {currentUser.email}
-    //             </h2>
-    //           ) : (
-    //             <h2 className=" text-gray-900 font-semibold">
-    //               {currentUser.email}
-    //             </h2>
-    //           )}
-    //         </div>
-    //         <div className="mt-6">
-    //           <h3 className="text-lg font-semibold text-gray-900 mb-2">Bio</h3>
-    //           {isEditing ? (
-    //             <textarea
-    //               id="bio"
-    //               name="bio"
-    //               value={formData.bio}
-    //               onChange={handleChange}
-    //               className="w-full bg-gray-100 border border-gray-300 rounded px-2 py-1"
-    //               rows={3}
-    //             />
-    //           ) : (
-    //             <p className="text-gray-600">{currentUser.bio}</p>
-    //           )}
-    //         </div>
-    //         <div className="mt-6">
-    //           <h3 className="text-lg font-semibold text-gray-900 mb-2">
-    //             Interests
-    //           </h3>
-    //           {isEditing ? (
-    //             <input
-    //               id="interests"
-    //               type="text"
-    //               name="interests"
-    //               value={formData.interests}
-    //               onChange={handleChange}
-    //               className="w-full bg-gray-100 border border-gray-300 rounded px-2 py-1"
-    //             />
-    //           ) : (
-    //             <p className="text-gray-600">{currentUser.interests}</p>
-    //           )}
-    //         </div>
-
-    //         <div className="mt-12 flex justify-between ">
-    //           {isEditing ? (
-    //             <>
-    //               <button
-    //                 type="submit"
-    //                 className="mr-2 px-4 py-2 flex flex-row gap-2 justify-center items-center text-md font-semibold bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-300"
-    //                 disabled={imageFileUploading}
-    //               >
-    //                 {loading ? "Updating" : "Update"}
-    //                 <Check className="w-5 h-5" />
-    //               </button>
-    //               <button
-    //                 onClick={handleCancel}
-    //                 className="px-4 py-2 flex flex-row gap-2 justify-center items-center text-md font-semibold bg-gray-300 text-gray-700 rounded-lg  hover:bg-gray-400 transition duration-300"
-    //               >
-    //                 Cancel
-    //                 <X className="w-5 h-5" />
-    //               </button>
-    //             </>
-    //           ) : (
-    //             <div className="flex justify-between w-full mt-12">
-    //               <button
-    //                 onClick={handleEdit}
-    //                 className="px-4 py-2 flex flex-row gap-2 justify-center items-center text-md font-semibold bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-300"
-    //               >
-    //                 Edit
-    //                 <Pencil className="w-10 h-5" />
-    //               </button>
-    //               <button
-    //                 type="button"
-    //                 onClick={() => setShowModal(true)}
-    //                 className="px-4 py-2 flex flex-row gap-2 justify-center items-center text-md font-semibold bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-300"
-    //               >
-    //                 Delete
-    //                 <Delete className="w-5 h-5" />
-    //               </button>
-    //             </div>
-    //           )}
-    //         </div>
-    //       </div>
-    //     </form>
-    //   </div>
-
-    //   {updateUserSuccess && (
-    //     <Popup
-    //       message={updateUserSuccess}
-    //       type="success"
-    //       onClose={() => setUpdateUserSuccess(null)}
-    //     />
-    //   )}
-    //   {updateUserError && (
-    //     <Popup
-    //       message={updateUserError}
-    //       type="error"
-    //       onClose={() => setUpdateUserError(null)}
-    //     />
-    //   )}
-
-    //   {/* Modal for deletion */}
-    //   {showModal && (
-    //     <div
-    //       style={{
-    //         position: "fixed",
-    //         top: "0",
-    //         left: "0",
-    //         width: "100%",
-    //         height: "100%",
-    //         backgroundColor: "rgba(0, 0, 0, 0.5)",
-    //         display: "flex",
-    //         justifyContent: "center",
-    //         alignItems: "center",
-    //       }}
-    //     >
-    //       <div
-    //         style={{
-    //           backgroundColor: "white",
-    //           padding: "2rem",
-    //           borderRadius: "8px",
-    //           width: "400px",
-    //           textAlign: "center",
-    //         }}
-    //       >
-    //         <div
-    //           style={{
-    //             marginBottom: "1rem",
-    //             color: "gray",
-    //           }}
-    //         >
-    //           <svg
-    //             xmlns="http://www.w3.org/2000/svg"
-    //             fill="none"
-    //             viewBox="0 0 24 24"
-    //             strokeWidth="2"
-    //             stroke="currentColor"
-    //             style={{ width: "56px", height: "56px", margin: "0 auto" }}
-    //           >
-    //             <path
-    //               strokeLinecap="round"
-    //               strokeLinejoin="round"
-    //               d="M12 9v2m0 4h.01M21 12A9 9 0 1112 3a9 9 0 019 9z"
-    //             />
-    //           </svg>
-    //         </div>
-    //         <h3 style={{ marginBottom: "1rem", color: "gray" }}>
-    //           Are you sure you want to delete your account?
-    //         </h3>
-    //         <div
-    //           style={{ display: "flex", justifyContent: "center", gap: "1rem" }}
-    //         >
-    //           <button
-    //             style={{
-    //               backgroundColor: "red",
-    //               color: "white",
-    //               padding: "0.5rem 1rem",
-    //               border: "none",
-    //               borderRadius: "4px",
-    //               cursor: "pointer",
-    //             }}
-    //             onClick={handleDelete}
-    //           >
-    //             Yes, I&apos;m sure
-    //           </button>
-    //           <button
-    //             style={{
-    //               backgroundColor: "gray",
-    //               color: "white",
-    //               padding: "0.5rem 1rem",
-    //               border: "none",
-    //               borderRadius: "4px",
-    //               cursor: "pointer",
-    //             }}
-    //             onClick={() => setShowModal(false)}
-    //           >
-    //             No, cancel
-    //           </button>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   )}
-    // </div>
-
     <div className="h-fit bg-gradient-to-b from-purple-50 to-white flex  justify-center p-4 ">
       <div className="bg-white rounded-lg shadow-xl overflow-hidden w-full max-w-2xl">
         {/* <div
@@ -844,6 +580,30 @@ const ProfilePage = () => {
             <h3 style={{ marginBottom: "1rem", color: "gray" }}>
               Are you sure you want to delete your account?
             </h3>
+            {apiMessage && ( // Display API message if available
+              <div
+                style={{
+                  marginBottom: "1rem",
+                  color: apiMessage.startsWith("Error") ? "red" : "green",
+                  fontWeight: "bold",
+                }}
+              >
+                {apiMessage}
+              </div>
+            )}
+            <input
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "0.5rem",
+                marginBottom: "1rem",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+              }}
+            />
             <div
               style={{ display: "flex", justifyContent: "center", gap: "1rem" }}
             >
@@ -857,8 +617,9 @@ const ProfilePage = () => {
                   cursor: "pointer",
                 }}
                 onClick={handleDelete}
+                disabled={loading} // Disable button during loading
               >
-                Yes, I&apos;m sure
+                {loading ? "Deleting..." : "Yes, I&apos;m sure"}
               </button>
               <button
                 style={{
@@ -869,7 +630,10 @@ const ProfilePage = () => {
                   borderRadius: "4px",
                   cursor: "pointer",
                 }}
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  setShowModal(false);
+                  setApiMessage(""); // Clear message on modal close
+                }}
               >
                 No, cancel
               </button>
