@@ -619,7 +619,7 @@ const ProfilePage = () => {
                 onClick={handleDelete}
                 disabled={loading} // Disable button during loading
               >
-                {loading ? "Deleting..." : "Yes, I&apos;m sure"}
+                {loading ? "Deleting..." : "Yes, I'm sure"}
               </button>
               <button
                 style={{
